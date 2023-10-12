@@ -1,1 +1,0 @@
-The library doesent compile yet but each function should work if copy them over and define some pins.	//Might need #includes for some
