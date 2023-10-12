@@ -102,17 +102,7 @@ int SoundSens() {
   return analogRead(SoundAnalogPin);
 }
 
-bool IrInput() {
-  if (irrecv.decode(&results)) {
-    if (results.value == 1) {
-      return 1;
-    } else {
-      return 0;
-    }
-    Serial.println(results.value);
-    irrecv.resume();
-  }
-}
+
 
 void ActiveBuzzerOn(int StartTime, int BuzPin) {
   if (StartTime - millis() < 1000) {
@@ -136,9 +126,6 @@ float GetTempOneWire() {
   return sensors.getTempCByIndex(0);
 }
 
-void IrOutput() {
-  irsend.sendRC5(0x1, 8);
-}
 
 int GetIrInPin() {
   return IrIn;
