@@ -15,6 +15,9 @@ void setup(){
   irrecv.enableIRIn();
   irrecv.blink13(true);
   IrSender.begin();
+
+  Init(); //Needed for the thiny
+
 }
 
 void loop(){
