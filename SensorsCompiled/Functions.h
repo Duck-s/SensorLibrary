@@ -1,54 +1,40 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-#include <DHT11.h>  //SPECIFICALLY THE LIBRARY BY DHRUBA SAHA
+#include <DHT11.h>              //SPECIFICALLY THE LIBRARY BY DHRUBA SAHA
 #include <OneWire.h>            //SEPERATE DIGITAL TEMP SENSOR
 #include <DallasTemperature.h>  //ONE WIRE ADDON
 
-
-bool JoystickPos(int &x, int &y);
+extern int buzzerTimer;
 
 void Init();  //FOR ANYTHING THAT NEEDS INITIALIZATION
+void TestInit();
+void PassivebuzzerOn(int BuzPin);
+void ActiveBuzzerOn(int StartTime, int BuzPin);
+void RelayOn();
+void RelayOff();
+void SetBuzzTimer();
+
+bool JoystickPos(int &x, int &y);
+bool MotionSens();
+bool TapSens();
+bool ShockSens();
 
 int FloodSens();
-
-bool MotionSens();
+int SoundSens();
+int GetHumidity();
+int GetTemp();
+int GetIrInPin();             //GetPinFor for troubleshooting
+int GetOneWireTempSensPin();  //GetPinFor for troubleshooting
+int GetDHT11Pin();            //GetPinFor for troubleshooting
 
 float GetTempOneWire();
 
-void PassivebuzzerOn(int BuzPin);
-
-void ActiveBuzzerOn(int StartTime, int BuzPin);
-
-void RelayOn();
-
-void RelayOff();
-
-int SoundSens();
-
 long GetDistance();
 
-int GetHumidity();
-
-int GetTemp();
-
-bool TapSens();
-
-bool ShockSens();
-
-int GetIrInPin();
-
-int GetOneWireTempSensPin();
-
-int GetDHT11Pin();
-
 static DHT11 dht11(GetDHT11Pin());
-
 static OneWire oneWire(GetOneWireTempSensPin());
-static DallasTemperature sensors(&oneWire);
-//IR SEND NEEDS TO BE ON PWM PIN 3... IDK WHY
-//irsend.sendRC5(0x0, 8); //send 0x0 code (8 bits)
-
+static DallasTemperature sensors(&oneWire);     
 
 
 #endif  //FUNCTIONS_H

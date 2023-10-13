@@ -1,36 +1,87 @@
 #include "Functions.h"
 
+
 #define OneWireTempSens 0   //SEPERATE TEMP SENS ONE WIRE
+#define DHT11Pin 0          //DHT11 PIN
 #define ShockPin 0          //SCHOCK DEVICE IS FOR BIG IMPACTS APPARENTLY..?
 #define TapPin 0            //TAP SENSOR -- SUPER SENSIIVE
+#define FloodSensPin A0     //FLOOD DETECTION (ANALOG PIN)
 #define RedPin 0            //RGBLED
 #define GreenPin 0          //RGBLED
-#define bluePin 0           //RGBLED
-#define FloodSensPin A0     //FLOOD DETECTION (ANALOG PIN)
+#define BluePin 0           //RGBLED
 #define SR04TrigPin A0      //HC-SR04 DISTANCE SENSOR (Analog) 5V
-#define SR04EchoPin 0       //HC-SR04 DISTANCE SENSOR (Analog) 5V
+#define SR04EchoPin A0      //HC-SR04 DISTANCE SENSOR (Analog) 5V
+#define ProxSensPin 0       //PROXIMITY SENSOR
 #define SoundAnalogPin A0   //BIG SOUND SENSOR (ANALOG)
-#define IrIn 2              //IR RECV PIN CAS LP WANTS US TO
-#define ActiveBuzzerPin 0   // GUESS WHAT IT IS
+#define ActiveBuzzerPin 0   //GUESS WHAT IT IS
+#define PassiveBuzzerPin    //GUESS
 #define PassiveBuzzerPin 0  //CMON GUESS
-#define DHT11Pin 0          //DHT11 Pin...
-#define ProxSensPin 0      //Proximity sensor pin
-#define RelayPin 0
 #define JoystickXPin A0     //JOYSTICK X
-#define JoystickYPin A0    //JOYSTICK Y
-#define JoyStickBttn 0     //JOYSTICK button
+#define JoystickYPin A0     //JOYSTICK Y
+#define JoyStickBttn 0      //JOYSTICK button
+#define RelayPin 0          //RELAY PIN FOR MY G JAMIE
+#define IrIn 2              //IR RECV PIN CAS LP WANTS US TO
 
 
-bool JoystickPos(int &x, int &y)
-{
-  x = analogRead(JoystickXPin); 
-  y = analogRead(JoystickYPin); 
-  return digitalRead( JoyStickBttn);
+//Testing that were receiving signals
+//Not 100% accurate but should give a good sens
+void TestInit() {
+  int testx, testy;
+  JoystickPos(testx, testy);
+  if (testx && testy) {
+    Serial.println("Joystick\tYES");
+  } else
+    Serial.println("Joystick\tYNO");
+  delay(100);
+
+  if (GetTemp()) {
+    Serial.println("DHT11Temperature \tYES");
+  } else
+    Serial.println("DHT11Temperature \tNO");
+  delay(100);
+
+  if (GetHumidity()) {
+    Serial.println("DHT11Humidity \tYES");
+  } else
+    Serial.println("DHT11Temperature \tNO");
+  delay(100);
+
+  if (FloodSens()) {
+    Serial.println("FloodSens \tYES");
+  } else
+    Serial.println("FloodSens \tNO");
+  delay(100);
+
+  if (MotionSens()) {
+    Serial.println("MotionSens \tYES");
+  } else
+    Serial.println("MotionSens \tNO \tCurrently not detecting");
+  delay(100);
+
+  if (GetDistance()) {
+    Serial.println("SR04Distance \tYES");
+  } else
+    Serial.println("SR04Distance \tYES");
+  delay(100);
+
+  if (SoundSens()) {
+    Serial.println("SoundSense \tYES");
+  } else
+    Serial.println("SoundSense \tNO");
+  delay(100);
 }
 
+//returns button needs x and y variables to change
+//can be changed to return and int for direction
+//requires decode tho so.... another day
+bool JoystickPos(int &x, int &y) {
+  x = analogRead(JoystickXPin);
+  y = analogRead(JoystickYPin);
+  return digitalRead(JoyStickBttn);
+}
 
-
-//DETECTS IMPACTS APPARENTLY
+//Detects Impacts apparently
+//theres a small chance its electric shock but im like 80% sure its not...
 bool ShockSens() {
   int val = digitalRead(ShockPin);
   Serial.println(val);
@@ -56,7 +107,7 @@ bool TapSens() {
   }
 }
 
-//DHT11 GETS TEMP AND ERROR CHECKS
+//DHT11 returns temp and debugs
 int GetTemp() {
   int temperature = dht11.readTemperature();
   if (temperature != DHT11::ERROR_CHECKSUM && temperature != DHT11::ERROR_TIMEOUT) {
@@ -69,8 +120,7 @@ int GetTemp() {
   }
 }
 
-
-//DHT11 GETS HUMIDITY AND ERROR CHECKS
+//DHT11 returns humidity and debugs
 int GetHumidity() {
   int humidity = dht11.readHumidity();
   if (humidity != DHT11::ERROR_CHECKSUM && humidity != DHT11::ERROR_TIMEOUT) {
@@ -83,19 +133,19 @@ int GetHumidity() {
   }
 }
 
-
-//GETS VALUE FOR FLOOD SENSOR
-//ANYTHING > 100 IS PROBABLY BAD
+//Gets current on floodsensor
+//ANYTHING > 100 is probably bad
 int FloodSens() {
   return analogRead(FloodSensPin);
 }
 
-bool MotionSens()
-{
+//Returns the digital signal for motion sensor
+bool MotionSens() {
   return digitalRead(ProxSensPin);
 }
 
 //HC-SR04 distance sensor
+//Returns... distance
 long GetDistance() {
   long duration, d;
   digitalWrite(SR04TrigPin, LOW);
@@ -117,63 +167,88 @@ long GetDistance() {
 
 //Returns the analog value of BIG SOUND -- SMALL SOUND
 //Can be tuned in proj for db level needed
+//May need to tune the sensor with the pot
 int SoundSens() {
   return analogRead(SoundAnalogPin);
 }
 
-void ActiveBuzzerOn(int StartTime, int BuzPin) {
-  if (StartTime - millis() < 1000) {
-    digitalWrite(BuzPin, HIGH);
+//Sets the time since activebuzzer activated
+//Makes it so it last a specific time without interrupt
+void SetBuzzTimer(int time) {
+  buzzerTimer = time;
+}
+
+//checks
+void ActiveBuzzerOn() {
+  if (buzzerTimer) {
+    if (buzzerTimer - millis() < 1000) {
+      digitalWrite(ActiveBuzzerPin, HIGH);
+      delay(1);
+      digitalWrite(ActiveBuzzerPin, LOW);
+      delay(1);
+    } else
+      SetBuzzTimer(0);
+  } else {
+    SetBuzzTimer(millis());
+    digitalWrite(ActiveBuzzerPin, HIGH);
     delay(1);
-    digitalWrite(BuzPin, LOW);
+    digitalWrite(ActiveBuzzerPin, LOW);
     delay(1);
   }
 }
 
 //This DOES block the code and play a little jingle
-void PassivebuzzerOn(int BuzPin) {
+//Jingle is generous...
+void PassivebuzzerOn() {
 
   for (int thisNote = 0; thisNote < 8; thisNote++) {
     // pin8 output the voice, every scale is 0.5 sencond
-    tone(BuzPin, thisNote * 50, 500);
+    tone(PassiveBuzzerPin, thisNote * 50, 500);
   }
 }
 
-void RelayOn()
-{
+//Turns relay on
+//Uses like 25W of power lol
+void RelayOn() {
   digitalWrite(RelayPin, HIGH);
 }
 
-void RelayOff()
-{
+//Turns relay off
+//Uses like 25W of power lol
+void RelayOff() {
   digitalWrite(RelayPin, LOW);
 }
 
+//Gets Temperature with the Other Temp Sensor
 float GetTempOneWire() {
   sensors.requestTemperatures();
   return sensors.getTempCByIndex(0);
 }
 
+//Gets pin cas IRremote is dumb
 int GetIrInPin() {
   return IrIn;
 }
 
+//Gets One Wire Pin cas declared in Functions.h
+//Using a class from a lib is annoying af
 int GetOneWireTempSensPin() {
   return OneWireTempSens;
 }
 
-int GetDHT11Pin(){
+//Gets DHT11 pin for class
+int GetDHT11Pin() {
   return DHT11Pin;
 }
 
-
+//Initializes pins and starts sensors
 void Init() {
   pinMode(JoyStickBttn, INPUT);
   pinMode(ShockPin, INPUT);
   pinMode(TapPin, INPUT);
   pinMode(RedPin, OUTPUT);
   pinMode(GreenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
+  pinMode(BluePin, OUTPUT);
   pinMode(FloodSensPin, INPUT);
   pinMode(SR04TrigPin, OUTPUT);
   pinMode(SR04EchoPin, INPUT);
@@ -182,5 +257,4 @@ void Init() {
   pinMode(PassiveBuzzerPin, OUTPUT);
   pinMode(ProxSensPin, INPUT);
   sensors.begin();
-
 }

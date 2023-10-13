@@ -1,40 +1,49 @@
 #include "Functions.h"
-#include <IRremote.h> //Dont ask me why but Ir dosent work in the FUNCTIONS lib
-                      //Some Definition error....
+#include <IRremote.h>  
+//Dont ask me why but Ir dosent work in the FUNCTIONS lib
+//Some Definition error....
 
 IRrecv irrecv(GetIrInPin());
 decode_results results;
-
 IRsend irsend;  //IRSEND
 
+void IRSend();
+void IRIn();
+void IRInit();
 
 
-
-void setup(){
+void setup() {
   Serial.begin(9600);
-  irrecv.enableIRIn();
-  irrecv.blink13(true);
-  IrSender.begin();
+  Init();         //Needed for the thiny
+  TestInit();   //Not ready yet check Functions.cpp for more info
+}
 
-  Init(); //Needed for the thiny
+void loop() {
+
+
 
 }
 
-void loop(){
- IRIn();
-}
 
 
-void IRSend()
-{
-  irsend.sendNEC(0x1, 8);
+
+void IRSend(uint32_t message, uint8_t LengthInBits) {
+  irsend.sendRC5(message, LengthInBits);      //Uses RC5 protocall
   delay(30);
 }
 
-void IRIn()
-{
-   if (irrecv.decode(&results)){
-        Serial.println(results.value, HEX);
-        irrecv.resume();
+void IRIn() {
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value, HEX);
+    irrecv.resume();
   }
+}
+
+void IrInit(){
+  irrecv.enableIRIn();
+  irrecv.blink13(true);
+  IrSender.begin(3);
+  //IR SEND NEEDS TO BE ON PWM PIN 3 FOR THIS LIB
+  //irsend.sendRC5(0x0, 8);
+  //send 0x0 code (8 bits)
 }
