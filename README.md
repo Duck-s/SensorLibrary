@@ -10,6 +10,6 @@ All the pins are defined in the Functions.cpp file and should be changed before 
 These Functions may be component specific so dont expect it to work immediatly if you didnt get the ELEGOO kit.
 
 Feel free to yoink the code for your own purpouses and change it to suit your needs.
-This code still works even if you dont use all the sensors without removing them.
-
+This code should still works even if you dont use all the sensors without removing them.
+I take no blame if it fries your shit check the code over before use, we all make mistakes.
 
