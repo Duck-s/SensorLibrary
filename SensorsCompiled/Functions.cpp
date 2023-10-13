@@ -1,6 +1,6 @@
 #include "Functions.h"
 
-#define OneWireTempSens 2   //SEPERATE TEMP SENS ONE WIRE
+#define OneWireTempSens 0   //SEPERATE TEMP SENS ONE WIRE
 #define ShockPin 0          //SCHOCK DEVICE IS FOR BIG IMPACTS APPARENTLY..?
 #define TapPin 0            //TAP SENSOR -- SUPER SENSIIVE
 #define RedPin 0            //RGBLED
@@ -10,10 +10,24 @@
 #define SR04TrigPin A0      //HC-SR04 DISTANCE SENSOR (Analog) 5V
 #define SR04EchoPin 0       //HC-SR04 DISTANCE SENSOR (Analog) 5V
 #define SoundAnalogPin A0   //BIG SOUND SENSOR (ANALOG)
-#define IrIn 0              //IR RECV PIN CAS LP WANTS US TO
+#define IrIn 2              //IR RECV PIN CAS LP WANTS US TO
 #define ActiveBuzzerPin 0   // GUESS WHAT IT IS
-#define PassiveBuzzerPin 0  // CMON GUESS
-#define DHT11Pin 0
+#define PassiveBuzzerPin 0  //CMON GUESS
+#define DHT11Pin 0          //DHT11 Pin...
+#define ProxSensPin 0      //Proximity sensor pin
+#define RelayPin 0
+#define JoystickXPin A0     //JOYSTICK X
+#define JoystickYPin A0    //JOYSTICK Y
+#define JoyStickBttn 0     //JOYSTICK button
+
+
+bool JoystickPos(int &x, int &y)
+{
+  x = analogRead(JoystickXPin); 
+  y = analogRead(JoystickYPin); 
+  return digitalRead( JoyStickBttn);
+}
+
 
 
 //DETECTS IMPACTS APPARENTLY
@@ -76,6 +90,11 @@ int FloodSens() {
   return analogRead(FloodSensPin);
 }
 
+bool MotionSens()
+{
+  return digitalRead(ProxSensPin);
+}
+
 //HC-SR04 distance sensor
 long GetDistance() {
   long duration, d;
@@ -102,18 +121,6 @@ int SoundSens() {
   return analogRead(SoundAnalogPin);
 }
 
-bool IrInput() {
-  if (irrecv.decode(&results)) {
-    if (results.value == 1) {
-      return 1;
-    } else {
-      return 0;
-    }
-    Serial.println(results.value);
-    irrecv.resume();
-  }
-}
-
 void ActiveBuzzerOn(int StartTime, int BuzPin) {
   if (StartTime - millis() < 1000) {
     digitalWrite(BuzPin, HIGH);
@@ -122,6 +129,7 @@ void ActiveBuzzerOn(int StartTime, int BuzPin) {
     delay(1);
   }
 }
+
 //This DOES block the code and play a little jingle
 void PassivebuzzerOn(int BuzPin) {
 
@@ -131,13 +139,19 @@ void PassivebuzzerOn(int BuzPin) {
   }
 }
 
+void RelayOn()
+{
+  digitalWrite(RelayPin, HIGH);
+}
+
+void RelayOff()
+{
+  digitalWrite(RelayPin, LOW);
+}
+
 float GetTempOneWire() {
   sensors.requestTemperatures();
   return sensors.getTempCByIndex(0);
-}
-
-void IrOutput() {
-  irsend.sendRC5(0x1, 8);
 }
 
 int GetIrInPin() {
@@ -151,7 +165,10 @@ int GetOneWireTempSensPin() {
 int GetDHT11Pin(){
   return DHT11Pin;
 }
+
+
 void Init() {
+  pinMode(JoyStickBttn, INPUT);
   pinMode(ShockPin, INPUT);
   pinMode(TapPin, INPUT);
   pinMode(RedPin, OUTPUT);
@@ -161,10 +178,9 @@ void Init() {
   pinMode(SR04TrigPin, OUTPUT);
   pinMode(SR04EchoPin, INPUT);
   pinMode(SoundAnalogPin, INPUT);
-  pinMode(IrIn, INPUT);
   pinMode(ActiveBuzzerPin, OUTPUT);
   pinMode(PassiveBuzzerPin, OUTPUT);
+  pinMode(ProxSensPin, INPUT);
   sensors.begin();
-  
-  
+
 }
