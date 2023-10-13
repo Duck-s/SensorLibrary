@@ -15,7 +15,7 @@ void IRInit();
 void setup() {
   Serial.begin(9600);
   Init();         //Needed for the thiny
-  TestInit();   //Not ready yet check Functions.cpp for more info
+  TestInit();     //Runs through basic tests not 100% accurate
 }
 
 void loop() {
