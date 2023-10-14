@@ -1,4 +1,4 @@
-//The EXP32-CAM is seperate from the 
+//The EXP32-CAM is seperate from the
 
 
 #include "Functions.h"
@@ -22,20 +22,23 @@ String InputPassword = "";
 int timeToPassword = 0;
 
 void setup() {
-  Init();         //Needed for the thiny
-  //IrInit();
   Serial.begin(9600);
-  RGBSet("red");  //Indicates Test Starting
-  TestInit();     //Runs through basic tests to see responces not 100% accurate
-  RGBSet("Green");
-  state = 0;                                                                   //Running a state machine so setting state to 0
+
+  Init();         //Needed for the thiny
+  //TestInit()    //moved to inside Init() function as i want it to start immediatly
+  RGBSet("blue"); //Test Complete Indicator
+  //IrInit();     //For lp ir BS
+  state = 0;      //Running a state machine so setting state to 0
   attachInterrupt(digitalPinToInterrupt(GetDoorSensPin()), DoorOpen, RISING);  //Not tested yet may need FALLING
   attachInterrupt(digitalPinToInterrupt(GetSwitchPin()), IdleSwitch, CHANGE);  //IDLE switch
+  delay(100);
+  RGBSet("off");
+
 }
 
 void loop() {
-  
- 
+
+
   if (state == 0) {  //State 0 is standard checks for damage/danger
     if (FloodSens() > 150) {
       RGBSet("red");
@@ -61,7 +64,7 @@ void loop() {
       Serial.println(GetTemp());
       state = 1;
     }
-     //UPDTE TIME ON LED SCREEN
+    //UPDTE TIME ON LED SCREEN
     delay(70);
   }
 
@@ -72,11 +75,11 @@ void loop() {
     state = idleState;  //Even if shit hitting fan resume default scan
   }
 
-  else if (state == 2){
+  else if (state == 2) {
     PassivebuzzerOn();
     //DISPLAY on led screen shits good you may continue.
     state = idleState;
-    
+
   }
 
   else if (state == 3) {
@@ -117,12 +120,10 @@ void loop() {
 }
 
 
-void IdleSwitch(){
-  if(idleState)
-  {
+void IdleSwitch() {
+  if (idleState) {
     idleState = 0;
-  }
-  else
+  } else
     idleState = 5;
 }
 

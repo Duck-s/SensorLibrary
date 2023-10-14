@@ -317,4 +317,5 @@ void Init() {
   pinMode(ProxSensPin, INPUT);
   pinMode(DoorSensPin, INPUT);
   sensors.begin();
+  TestInit();     //Runs through basic tests to see responces not 100% accurate
 }
