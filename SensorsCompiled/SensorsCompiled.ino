@@ -12,23 +12,24 @@ void IRSend();
 void IRIn();
 void IRInit();
 
-uint8_t state;
-String InputPassword = "";
-int timeToPassword = 0;
 
 void setup() {
   Init();  //Needed for the thiny
   Serial.begin(9600);
   RGBSet("red");  //Indicates Test Starting
-  TestInit();     //Runs through basic tests to see responces not 100% accurate
+
+  //test should take about a second
+  //Runs through basic tests to see see functions respond not 100% accurate
+  //Should give rough idea if sensors are working
+  TestInit();  
+
+  //IrInit(); //For Ir stuff lp WANTS :( 
+
   RGBSet("Green");
-  state = 0;                                              //Running a state machine so setting state to 0
-  attachInterrupt(digitalPinToInterrupt(GetDoorSensPin()), DoorOpen, RISING);  //Not tested yet may need FALLING
 }
 
 void loop() {
 
-  if (state == 0) {  //State 0 is standard checks for damage/danger
     if (FloodSens() > 150) {
       RGBSet("red");
       Serial.print("FloodSensor \t");
@@ -54,52 +55,10 @@ void loop() {
       state = 1;
     }
     delay(70);
-  }
-
-  else if (state == 1) {
-    //Double Check shits still hitting the fan
-    //Then send data to server thingy
-    delay(70);
-    state = 0;
-  }
-
-  else if (state == 3) {
-    if (!timeToPassword) {
-      timeToPassword = millis();
-      SetBuzzTimer(millis());
-      ActiveBuzzerOn();
-      RGBSet("red");
-      //TURN I2C SCREEN ON REQUESTING PASSWORD
-      //Check use password
-    } else {
-      if (InputPassword == SET_PASSWORD) {
-        state = 2;
-        timeToPassword = 0;
-        RGBSet("Green");
-
-        //SendServer WHO IN BUILDING
-        state = 0;
-
-      } else {
-        if (timeToPassword - 10000 > millis()) {
-          state = 4;  //INTRUDER SHIT PANIC
-        }
-      }
-    }
-    ActiveBuzzerOn();
-  }
-
-  else if (state == 4) {
-    //Send signal to Server Intruder IN
-    //no idea what else.....
-  }
+ 
 }
 
 
-
-void DoorOpen() {
-  state = 3;
-}
 
 void IRSend(uint32_t message, uint8_t LengthInBits) {
   irsend.sendRC5(message, LengthInBits);  //Uses RC5 protocall
@@ -117,7 +76,7 @@ void IrInit() {
   irrecv.enableIRIn();
   irrecv.blink13(true);
   IrSender.begin(3);
-  //IR SEND NEEDS TO BE ON PWM PIN 3 FOR THIS LIB
-  //irsend.sendRC5(0x0, 8);
-  //send 0x0 code (8 bits)
+  //IR SEND NEEDS TO BE ON PWM PIN 3 FOR THIS LIBRARY
+  //irsend.sendRC5(0x0, 8); //sends 0x0 code (8 bits)
+  
 }

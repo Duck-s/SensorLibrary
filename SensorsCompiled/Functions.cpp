@@ -21,7 +21,7 @@
 #define JoyStickBttn 0      //JOYSTICK button
 #define RelayPin 0          //RELAY PIN FOR MY G JAMIE
 #define IrIn 0              //IR RECV PIN CAS LP WANTS US TO
-#define DoorSensPin 0
+#define DoorSensPin 0       //FOR MAGNETIC SWITCH ON DOOR
 int buzzerTimer;
 
 
@@ -45,7 +45,7 @@ void TestInit() {
   if (GetHumidity()) {
     Serial.println("DHT11Humidity \tYES");
   } else
-    Serial.println("DHT11Temperature \tNO");
+    Serial.println("DHT11Humidity \tNO");
   delay(100);
 
   if (FloodSens()) {
@@ -70,6 +70,12 @@ void TestInit() {
     Serial.println("SoundSense \tYES");
   } else
     Serial.println("SoundSense \tNO");
+  delay(100);
+
+  if (GetTempOneWire()) {
+    Serial.println("18B20 Temperature \tYES");
+  } else
+    Serial.println("18B20 Temperature \tNO");
   delay(100);
 }
 
@@ -185,11 +191,11 @@ bool MotionSens() {
   return digitalRead(ProxSensPin);
 }
 
-bool DoorAjar(){
+bool DoorAjar() {
   return digitalRead(DoorSensPin);
 }
 
-int GetDoorSensPin(){
+int GetDoorSensPin() {
   return DoorSensPin;
 }
 
