@@ -15,7 +15,7 @@ StateMachine is not complete but should show you how to use most functions.
 
 ## Test Cases
 Theres a TestInit() function that runs through some basic sensor tests, you can keep it seperate as is in the SensorCompiled example.
-Or you can add it to the Init() function found in the cpp file.
+Or you can add it to the Init() function found in the cpp file as shown in StateMachine.
 
 This code should still works even if you dont use all the sensors.
 I take no blame if it fries your shit check the code over before use, we all make mistakes.
