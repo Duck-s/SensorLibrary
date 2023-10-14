@@ -24,7 +24,7 @@
 
 
 //Testing that were receiving signals
-//Not 100% accurate but should give a good sens
+//Not 100% accurate but should give a good sens of whats capable
 void TestInit() {
   int testx, testy;
   JoystickPos(testx, testy);
@@ -71,7 +71,7 @@ void TestInit() {
   delay(100);
 }
 
-
+//Controls... The RGB led
 void RGBSet(String color) {
   color.toLowerCase();
   if (color == "red") {
@@ -109,9 +109,6 @@ void RGBSet(String color) {
     digitalWrite(BluePin, LOW);
   }
 }
-
-
-
 
 //returns button needs x and y variables to change
 //can be changed to return and int for direction
