@@ -10,6 +10,8 @@ All the pins are defined in the Functions.cpp file and should be changed before 
 These Functions may be component specific so dont expect it to work immediatly if you didnt get the ELEGOO kit.
 
 Feel free to yoink the code you need for your own purpouses and change it to suit your needs.
+If you ned an example got to the StateMachine.ino progect to see roughly how it works.
+StateMachine is not complete but should show you how to use most functions. 
 
 ## Test Cases
 Theres a TestInit() function that runs through some basic sensor tests, you can keep it seperate as is in the SensorCompiled example.
