@@ -1,0 +1,1 @@
+#define SET_PASSWORD "00002"

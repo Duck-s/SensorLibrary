@@ -30,6 +30,7 @@ int GetIrInPin();             //GetPinFor for troubleshooting
 int GetOneWireTempSensPin();  //GetPinFor for troubleshooting
 int GetDHT11Pin();            //GetPinFor for troubleshooting
 int GetDoorSensPin();
+int GetSwitchPin();
 
 float GetTempOneWire();
 

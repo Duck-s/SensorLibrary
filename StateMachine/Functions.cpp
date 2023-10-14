@@ -22,6 +22,7 @@
 #define RelayPin 0          //RELAY PIN FOR MY G JAMIE
 #define IrIn 0              //IR RECV PIN CAS LP WANTS US TO
 #define DoorSensPin 0
+#define SwitchPin 0
 int buzzerTimer;
 
 
@@ -290,6 +291,9 @@ int GetDHT11Pin() {
   return DHT11Pin;
 }
 
+int GetSwitchPin(){
+  return SwitchPin;
+}
 //Initializes pins and starts sensors
 void Init() {
   pinMode(JoyStickBttn, INPUT);
