@@ -71,6 +71,48 @@ void TestInit() {
   delay(100);
 }
 
+
+void RGBSet(String color) {
+  color.toLowerCase();
+  if (color == "red") {
+    digitalWrite(RedPin, HIGH);
+    digitalWrite(GreenPin, LOW);
+    digitalWrite(BluePin, LOW);
+  } else if (color == "green") {
+    digitalWrite(RedPin, LOW);
+    digitalWrite(GreenPin, HIGH);
+    digitalWrite(BluePin, LOW);
+  }
+  if (color == "blue") {
+    digitalWrite(RedPin, LOW);
+    digitalWrite(GreenPin, LOW);
+    digitalWrite(BluePin, HIGH);
+  }
+  if (color == "brown") {
+    digitalWrite(RedPin, HIGH);
+    digitalWrite(GreenPin, HIGH);
+    digitalWrite(BluePin, LOW);
+  }
+  if (color == "magenta" || (color = "purple")) {
+    digitalWrite(RedPin, HIGH);
+    digitalWrite(GreenPin, LOW);
+    digitalWrite(BluePin, HIGH);
+  }
+  if (color == "teal" || (color = "lightblue")) {
+    digitalWrite(RedPin, HIGH);
+    digitalWrite(GreenPin, LOW);
+    digitalWrite(BluePin, HIGH);
+  }
+  if (color == "off") {
+    digitalWrite(RedPin, LOW);
+    digitalWrite(GreenPin, LOW);
+    digitalWrite(BluePin, LOW);
+  }
+}
+
+
+
+
 //returns button needs x and y variables to change
 //can be changed to return and int for direction
 //requires decode tho so.... another day

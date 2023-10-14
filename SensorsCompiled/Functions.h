@@ -14,6 +14,7 @@ void ActiveBuzzerOn(int StartTime, int BuzPin);
 void RelayOn();
 void RelayOff();
 void SetBuzzTimer();
+void RGBSet();
 
 bool JoystickPos(int &x, int &y);
 bool MotionSens();

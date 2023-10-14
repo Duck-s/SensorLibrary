@@ -19,8 +19,10 @@ void setup() {
 }
 
 void loop() {
-
-delay(100);
+  RGBSet(red);
+  delay(500)
+  RGBSet(Teal);
+  delay(500);
 }
 
 
